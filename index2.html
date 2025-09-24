@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login</title>
+  <style>
+    /* Reset-ish */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html,body { height: 100%; font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif; background: linear-gradient(135deg,#eef2ff 0%, #f8fafc 100%); color:#0f172a; }
+
+    /* Layout */
+    .page {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 32px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(14, 22, 44, 0.08);
+      padding: 28px;
+      border: 1px solid rgba(15,23,42,0.04);
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .logo {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: linear-gradient(135deg,#6366f1,#06b6d4);
+      display: grid; place-items:center; color:white; font-weight:700;
+      font-size:18px;
+    }
+    h1 { font-size: 20px; margin-bottom: 4px; }
+    p.lead { font-size: 13px; color: #475569; margin-bottom: 18px; }
+
+    /* Form */
+    form { display: grid; gap: 12px; }
+    label { font-size: 13px; color:#0f172a; margin-bottom:6px; display:block; }
+    .field {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 8px;
+    }
+    input[type="email"],
+    input[type="password"] {
+      width:100%;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #e6eef8;
+      background:#fbfdff;
+      font-size: 14px;
+      outline: none;
+      transition: box-shadow .12s, border-color .12s;
+    }
+    input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 4px 18px rgba(99,102,241,0.12);
+    }
+
+    .show-toggle {
+      border: none;
+      background: transparent;
+      padding: 6px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      color: #475569;
+      border-radius: 6px;
+    }
+
+    .row {
+      display:flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+    .checkbox {
+      display:flex; gap:8px; align-items:center; font-size:13px; color:#475569;
+    }
+
+    button[type="submit"] {
+      width:100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg,#5b21b6,#06b6d4);
+      color:white;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(99,102,241,0.12);
+      transition: transform .08s ease, opacity .12s;
+    }
+    button[type="submit"]:active { transform: translateY(1px); }
+    .secondary {
+      margin-top: 8px;
+      font-size: 13px;
+      color:#475569;
+      text-align: center;
+    }
+    .secondary a { color: #334155; text-decoration: none; font-weight: 600; }
+
+    /* small helper text */
+    .error { color: #b91c1c; font-size: 13px; margin-top: 6px; display:none; }
+
+    /* Responsive */
+    @media (max-width:420px) {
+      .card { padding: 20px; border-radius: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <main class="card" role="main" aria-labelledby="signin-heading">
+      <div class="brand">
+        <div class="logo">VS</div>
+        <div>
+          <h1 id="signin-heading">Welcome back</h1>
+          <p class="lead">Sign in to continue to your workspace</p>
+        </div>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div>
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required autocomplete="username" />
+        </div>
+
+        <div>
+          <label for="password">Password</label>
+          <div class="field">
+            <input id="password" name="password" type="password" placeholder="Enter your password" required autocomplete="current-password" minlength="6" />
+            <button type="button" class="show-toggle" id="toggleShow" aria-pressed="false" aria-label="Show password">Show</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="checkbox"><input type="checkbox" id="remember" /> Remember me</label>
+          <a href="#" style="font-size:13px;color:#334155;text-decoration:none;">Forgot?</a>
+        </div>
+
+        <div>
+          <button type="submit">Sign in</button>
+          <p class="error" id="err">Please fill in valid credentials.</p>
+        </div>
+
+        <p class="secondary">Don't have an account? <a href="#">Create one</a></p>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    // Show / hide password
+    (function(){
+      const toggle = document.getElementById('toggleShow');
+      const pwd = document.getElementById('password');
+
+      toggle.addEventListener('click', () => {
+        const isPwd = pwd.type === 'password';
+        pwd.type = isPwd ? 'text' : 'password';
+        toggle.textContent = isPwd ? 'Hide' : 'Show';
+        toggle.setAttribute('aria-pressed', isPwd ? 'true' : 'false');
+      });
+
+      // Basic client-side validation demo (not secure for real auth)
+      const form = document.getElementById('loginForm');
+      const err = document.getElementById('err');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        err.style.display = 'none';
+
+        const email = form.email.value.trim();
+        const password = form.password.value;
+
+        // Simple checks
+        const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        const passwordOk = password.length >= 6;
+
+        if (!emailValid || !passwordOk) {
+          err.textContent = 'Please provide a valid email and a password of at least 6 characters.';
+          err.style.display = 'block';
+          return;
+        }
+
+        // Fake success action (replace with real auth call)
+        alert('Form submitted!\n\nEmail: ' + email);
+        form.reset();
+      });
+    })();
+  </script>
+</body>
+</html>
